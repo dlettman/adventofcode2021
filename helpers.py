@@ -25,8 +25,5 @@ def create_folder_structure():
         exercise_filename = f"exercise_{day_number}.py"
         shutil.copy((os.path.join(cwd, "template.py")), os.path.join(newdir_path, exercise_filename))
 
-        shutil.copy((os.path.join(cwd, "__init__.py")), os.path.join(newdir_path, "__init__.py"))
-
-
 if __name__ == "__main__":
     create_folder_structure()
