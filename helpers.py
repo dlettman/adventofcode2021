@@ -14,7 +14,16 @@ def create_folder_structure():
         day_number = str(i).zfill(2)
         newdir_path = os.path.join(cwd, day_number)
 
-        os.mkdir(newdir_path)
+        try:
+            os.mkdir(newdir_path)
+        except:
+            pass
+
+        text_path = os.path.join(newdir_path, "input1test.txt")
+        pathlib.Path(text_path).touch()
+
+        text_path = os.path.join(newdir_path, "input2test.txt")
+        pathlib.Path(text_path).touch()
 
         text_path = os.path.join(newdir_path, "input1.txt")
         pathlib.Path(text_path).touch()
