@@ -19,17 +19,11 @@ def create_folder_structure():
         except FileExistsError:
             pass
 
-        text_path = os.path.join(newdir_path, "input1test.txt")
-        pathlib.Path(text_path).touch()
-
-        text_path = os.path.join(newdir_path, "input2test.txt")
-        pathlib.Path(text_path).touch()
-
-        text_path = os.path.join(newdir_path, "input1.txt")
-        pathlib.Path(text_path).touch()
-
-        text_path = os.path.join(newdir_path, "input2.txt")
-        pathlib.Path(text_path).touch()
+        for filename in ["input1test.txt",
+                         "input2test.txt",
+                         "input1.txt",
+                         "input2.txt"]:
+            pathlib.Path(os.path.join(newdir_path, filename)).touch()
 
         exercise_filename = f"exercise_{day_number}.py"
         shutil.copy((os.path.join(cwd, "template.py")), os.path.join(newdir_path, exercise_filename))
