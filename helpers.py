@@ -16,7 +16,7 @@ def create_folder_structure():
 
         try:
             os.mkdir(newdir_path)
-        except:
+        except FileExistsError:
             pass
 
         text_path = os.path.join(newdir_path, "input1test.txt")
