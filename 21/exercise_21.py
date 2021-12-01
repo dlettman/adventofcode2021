@@ -3,19 +3,19 @@ sys.path.append("..")
 import helpers
 
 def part_one(input_filename):
-    input = helpers.parse_input(input_filename)
-    if not input:
+    input_data = helpers.parse_input(input_filename)
+    if not input_data:
         return "*** NO INPUT SUPPLIED ***"
     # do stuff here
-    output = input
+    output = input_data
     return output
 
 def part_two(input_filename):
-    input = helpers.parse_input(input_filename)
-    if not input:
+    input_data = helpers.parse_input(input_filename)
+    if not input_data:
         return "*** NO INPUT SUPPLIED ***"
     # do stuff here
-    output = input
+    output = input_data
     return output
 
 if __name__ == "__main__":

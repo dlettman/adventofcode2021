@@ -3,24 +3,24 @@ sys.path.append("..")
 import helpers
 
 def part_one(input_filename):
-    input = helpers.parse_input(input_filename)
-    if not input:
+    input_data = helpers.parse_input(input_filename)
+    if not input_data:
         return "*** NO INPUT SUPPLIED ***"
     # do stuff here
     for idx, item1 in enumerate(input):
-        for item2 in input[idx+1:]:
+        for item2 in input_data[idx+1:]:
             if int(item1) + int(item2) == 2020:
                 return f"{item1} * {item2} = {int(item1) * int(item2)}"
-    output = input
+    output = input_data
     return output
 
 def part_two(input_filename):
-    input = helpers.parse_input(input_filename)
-    if not input:
+    input_data = helpers.parse_input(input_filename)
+    if not input_data:
         return "*** NO INPUT SUPPLIED ***"
     for idx, item1 in enumerate(input):
         for idx2, item2 in enumerate(input[idx+1:]):
-            for item3 in input[idx2+1:]:
+            for item3 in input_data[idx2+1:]:
                 if int(item1) + int(item2) + int(item3) == 2020:
                     return f"{item1} * {item2} * {item3} = {int(item1) * int(item2) * int(item3)}"
     return output
