@@ -7,16 +7,13 @@ import helpers
 
 def part_one(input_filename):
     input_data = helpers.parse_input(input_filename)
-    most_common_digits, least_common_digits = [], []
-    for idx in range(len(input_data[0])):
-        digit_count = Counter([item[idx] for item in input_data]).most_common()
-        most_common, least_common = digit_count[0][0], digit_count[1][0]
-        most_common_digits.append(most_common)
-        least_common_digits.append(least_common)
-    gamma_rate_decimal = int("".join(most_common_digits),2)
-    epsilon_rate_rate_decimal = int("".join(least_common_digits),2)
-
-    return f"gamma rate = {gamma_rate_decimal}, epsilon rate = {epsilon_rate_rate_decimal}, product = {gamma_rate_decimal * epsilon_rate_rate_decimal}"
+    most_common_digits = []
+    swap_mapping = {"0": "1", "1": "0"}
+    for column in zip(*input_data):
+        most_common_digits.append("1" if column.count("1") > column.count("0") else "0")
+    gamma_rate = int("".join(most_common_digits), 2)
+    epsilon_rate = int("".join([swap_mapping[char] for char in most_common_digits]), 2)
+    return f"gamma rate = {gamma_rate}, epsilon rate = {epsilon_rate}, product = {gamma_rate * epsilon_rate}"
 
 
 def find_rating(input_data, element="oxygen"):
