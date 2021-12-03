@@ -39,4 +39,4 @@ if __name__ == "__main__":
     print(f"REAL RESULT = {part_one('input.txt')}\n\n")
     print("*** PART TWO ***\n")
     print(f"Test result = {part_two('inputtest.txt')}\n")
-    print(f"REAL RESULT = {part_two('input.txt')}\n\n")
+    print(f"REAL RESULT = {part_two('input.txt')}")
