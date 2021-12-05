@@ -10,8 +10,6 @@ def parse_lines(line):
 
 
 def get_diagonal_line(x1, y1, x2, y2):
-    # HUGE ASSUMPTION here that our slopes will be one of the four below, but
-    # that's the shape of the data, so....
     if y2 > y1:
         if x1 > x2:
             direction = (-1, 1)
