@@ -49,9 +49,9 @@ def part_two(input_filename):
         digit_list = []
         for digit in output:
             # go-go arbitrary deduction!
-            if len(digit) in [2, 3, 4, 7]:
+            if len(digit) in [2, 3, 4, 7]:  # handles 1, 4, 7, 8
                 digit_list.append(easy_digit_map[len(digit)])
-            elif len(digit) == 5:  # 2, 3, & 5
+            elif len(digit) == 5:  # handles 2, 3, 5
                 if len(set(digit).intersection(one_set)) == 2:
                     digit_list.append(3)
                 elif segment_e.issubset(set(digit)):
