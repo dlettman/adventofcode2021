@@ -37,9 +37,7 @@ def part_two(input_filename):
             elif len(number) == 4:
                 four_set = set(number)
         one_set = set([number for number in input if len(number) == 2][0])
-        six_set = None
-        nine_set = None
-        zero_set = None
+        six_set, nine_set, zero_set = None, None, None
         for item in six_and_nine_and_zero:
             if len(set(item).intersection(one_set)) == 1:
                 six_set = set(item)
@@ -48,7 +46,6 @@ def part_two(input_filename):
             else:
                 zero_set = set(item)
         segment_e = zero_set.difference(nine_set)  # we'll use you later
-        one_set = set([number for number in input if len(number) == 2][0])
         digit_list = []
         for digit in output:
             # go-go arbitrary deduction!
