@@ -1,5 +1,6 @@
 import sys
 from collections import Counter
+import time
 
 sys.path.append("..")
 import helpers
@@ -9,16 +10,17 @@ def part_one(input_filename):  # AKA naive solution
     input_data = helpers.parse_input(input_filename)
     input_data = input_data[0].split(",")
     fishies = [int(item) for item in input_data]
-    new_fish = []
     for day in range(80):
-        for fish in fishies:
+        for idx, fish in enumerate(fishies):
             if fish == 0:
-                new_fish.append(6)
-                new_fish.append(8)
+                fishies[idx] = 6
+                fishies.append(8)
             else:
-                new_fish.append(fish - 1)
-        fishies = new_fish.copy()
-        new_fish = []
+                fishies.append(fish - 1)
+            print(fishies)
+            time.sleep(1)
+        print("Finished a loop!")
+
     return len(fishies)
 
 
@@ -49,7 +51,9 @@ def part_two(input_filename):  # AKA big brain solution
 if __name__ == "__main__":
     print("*** PART ONE ***\n")
     print(f"Test result = {part_one('inputtest.txt')}\n")
+    start_time = time.time()
     print(f"REAL RESULT = {part_one('input.txt')}\n\n")
     print("*** PART TWO ***\n")
-    print(f"Test result = {part_two('inputtest.txt')}\n")
-    print(f"REAL RESULT = {part_two('input.txt')}\n\n")
+    # print(f"Test result = {part_two('inputtest.txt')}\n")
+    start_time = time.time()
+    print(f"REAL RESULT = {part_two('input.txt')}")

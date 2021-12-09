@@ -40,6 +40,8 @@ def part_two(input_filename):
         if not best_solution:
             best_solution = total_diff
         if total_diff < best_solution:
+            print(f"best solution = {total_diff} at pos {i}")
+            print(f"max crab = {max(input_data)}")
             best_solution = total_diff
     return best_solution
 
