@@ -23,61 +23,48 @@ scoring_map_2 = {
     '>': 4
 }
 
+
 def part_one(input_filename):
     input_data = helpers.parse_input(input_filename)
-    score = 0
-    for line in input_data:
-        opener_queue = []
-        for char in line:
-            if char in open_close_map:
-                opener_queue.append(char)
-            else:
-                if char == open_close_map[opener_queue[-1]]:
-                    opener_queue.pop()
-                else:
-                    score += scoring_map[char]
-                    break
+    score = sum([is_line_corrupted(line)[1] for line in input_data])
     return score
 
 
+def is_line_corrupted(line):
+    opener_stack = []
+    for char in line:
+        if char in open_close_map:
+            opener_stack.append(char)
+        else:
+            if char == open_close_map[opener_stack[-1]]:
+                opener_stack.pop()
+            else:
+                return True, scoring_map[char]
+    return False, 0
 
-
-    return output
 
 def part_two(input_filename):
     input_data = helpers.parse_input(input_filename)
-    incomplete_lines = []
+    incomplete_lines = [line for line in input_data if not is_line_corrupted(line)[0]]
     incomplete_line_scores = []
-    for line in input_data:
-        corrupted = False
-        opener_queue = []
-        for char in line:
-            if char in open_close_map:
-                opener_queue.append(char)
-            else:
-                if char == open_close_map[opener_queue[-1]]:
-                    opener_queue.pop()
-                else:
-                    corrupted = True
-        if not corrupted:
-            incomplete_lines.append(line)
+
     for line in incomplete_lines:
-        opener_queue = []
+        opener_stack = []
         for char in line:
             if char in open_close_map:
-                opener_queue.append(char)
+                opener_stack.append(char)
             else:
-                if char == open_close_map[opener_queue[-1]]:
-                    opener_queue.pop()
+                if char == open_close_map[opener_stack[-1]]:
+                    opener_stack.pop()
         line_score = 0
-        while opener_queue:
+        while opener_stack:
             line_score = line_score * 5
-            line_score += scoring_map_2[open_close_map[opener_queue[-1]]]
-            opener_queue.pop()
+            line_score += scoring_map_2[open_close_map[opener_stack[-1]]]
+            opener_stack.pop()
         incomplete_line_scores.append(line_score)
-    print(incomplete_line_scores)
     middle_index = (len(incomplete_line_scores))//2
-    return (sorted(incomplete_line_scores)[middle_index])
+    return sorted(incomplete_line_scores)[middle_index]
+
 
 if __name__ == "__main__":
     print("*** PART ONE ***\n")
