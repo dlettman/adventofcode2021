@@ -36,9 +36,7 @@ def is_line_corrupted(line):
         if char in open_close_map:
             opener_stack.append(char)
         else:
-            if char == open_close_map[opener_stack[-1]]:
-                opener_stack.pop()
-            else:
+            if char != open_close_map[opener_stack.pop()]:
                 return True, scoring_map[char]
     return False, 0
 
@@ -54,13 +52,11 @@ def part_two(input_filename):
             if char in open_close_map:
                 opener_stack.append(char)
             else:
-                if char == open_close_map[opener_stack[-1]]:
-                    opener_stack.pop()
+                opener_stack.pop()
         line_score = 0
         while opener_stack:
             line_score = line_score * 5
-            line_score += scoring_map_2[open_close_map[opener_stack[-1]]]
-            opener_stack.pop()
+            line_score += scoring_map_2[open_close_map[opener_stack.pop()]]
         incomplete_line_scores.append(line_score)
     middle_index = (len(incomplete_line_scores))//2
     return sorted(incomplete_line_scores)[middle_index]
