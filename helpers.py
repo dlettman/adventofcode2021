@@ -2,10 +2,18 @@ import os
 import pathlib
 import shutil
 
+
+NEIGHBORS = [(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]
+
+
 def parse_input(filename):
     with open(filename) as file:
         input_list = file.read().splitlines()
     return input_list
+
+
+def nested_list_to_int(input_data):
+    return [[int(x) for x in lst] for lst in input_data]
 
 
 def create_folder_structure():
