@@ -53,6 +53,7 @@ def part_two(input_filename):
         for cave in visited_small_caves:
             if visited_small_caves[cave] == 2:
                 small_cave_visited_twice = True
+                break
         possible_next_steps = paths[current_path[-1]]
         valid_next_steps = []
         for next_step in possible_next_steps:
@@ -73,7 +74,7 @@ if __name__ == "__main__":
     print("*** PART ONE ***\n")
     print(f"Test result = {part_one('inputtest.txt')}\n")
     start = time.time()
-    print(f"REAL RESULT = {part_one('input.txt')}\n\n")
+    print(f"REAL RESULT = {part_one('input.txt')}")
     end = time.time()
     print(end - start, "seconds")
     print("*** PART TWO ***\n")
