@@ -7,11 +7,14 @@ from collections import Counter
 def get_individual_element_count(chunk_counter):
     elements = Counter()
     for chunk in chunk_counter:
-        if chunk[0] in elements:
-            elements[chunk[0]] += chunk_counter[chunk]
-        else:
-            elements[chunk[0]] += chunk_counter[chunk]
+        elements[chunk[0]] += chunk_counter[chunk]
     return elements
+
+
+def solve(counter):
+    most_common = counter.most_common(1)
+    least_common = counter.most_common()[:-2:-1]
+    return (most_common[0][1] - least_common[0][1])
 
 
 def parse_rules(input_data):
@@ -26,7 +29,7 @@ def parse_rules(input_data):
 def do_insertion(formula, recipes):  # AKA Naive solution
     new_formula = [formula[0]]
     for idx in range(len(formula) - 1):
-        # Every possible chunk has a reciple
+        # Every possible chunk has a recipe
         new_formula.append(recipes[formula[idx:idx+2]])
         new_formula.append(formula[idx + 1])
     return "".join(new_formula)
@@ -37,10 +40,7 @@ def do_it_with_counters(chunk_counter, recipes):  # AKA Optimized solution
     for chunk in chunk_counter:
         resultant_chunks = [chunk[0] + recipes[chunk], recipes[chunk] + chunk[1]]
         for res_chunk in resultant_chunks:
-            if res_chunk in new_counter:
-                new_counter[res_chunk] += chunk_counter[chunk]
-            else:
-                new_counter[res_chunk] = chunk_counter[chunk]
+            new_counter[res_chunk] += chunk_counter[chunk]
     return new_counter
 
 
@@ -50,9 +50,7 @@ def part_one(input_filename):
     for step in range(10):
         formula = do_insertion(formula, recipes)
     element_counter = Counter(formula)
-    most_common = element_counter.most_common(1)
-    least_common = element_counter.most_common()[:-2:-1]
-    return (most_common[0][1] - least_common[0][1])
+    return solve(element_counter)
 
 
 def part_two(input_filename):
@@ -64,9 +62,7 @@ def part_two(input_filename):
         chunk_counter = do_it_with_counters(chunk_counter, recipes)
     element_count = get_individual_element_count(chunk_counter)
     element_count[formula[-1]] += 1  # Last element gets left out by our de-duping
-    most_common = element_count.most_common(1)
-    least_common = element_count.most_common()[:-2:-1]
-    return ((most_common[0][1]) - (least_common[0][1]))
+    return solve(element_count)
 
 
 if __name__ == "__main__":
