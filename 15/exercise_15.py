@@ -1,22 +1,10 @@
 import sys
+import heapq
 sys.path.append("..")
 import helpers
-import heapq
+
 
 NEIGHBORS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-
-
-# def generate_rows(input_data):
-#     for y_iter in range(5):
-#         for row in input_data:
-#             new_row = []
-#             for x_iter in range(5):
-#                 new_row += ([int(item) + x_iter + y_iter for item in row])
-#             for idx, num in enumerate(new_row):
-#                 if num > 9:
-#                     new_row[idx] = num - 9
-#             yield new_row
-#     raise StopIteration
 
 
 def create_map(input_data, scale_factor):
@@ -60,8 +48,8 @@ def part_one(input_filename):  #  AKA solution if you can only go down or right
 
 def part_two(input_filename):  # AKA Dijkstra's
     input_data = helpers.parse_input(input_filename)
-    bigmap = create_map(input_data, 5)
     scale_mod = 5
+    bigmap = create_map(input_data, scale_mod)
     max_x = len(input_data[0] * scale_mod)
     max_y = len(input_data * scale_mod)
     total_risks = {key: None for key in bigmap.keys()}
@@ -83,5 +71,6 @@ if __name__ == "__main__":
     print(f"Test 2 result = {part_one('inputtest2.txt')}\n")
     print(f"REAL RESULT = {part_one('input.txt')}\n\n")
     print("*** PART TWO ***\n")
+    print(f"Test result = {part_two('inputtest.txt')}\n")
     print(f"Test result = {part_two('inputtest2.txt')}\n")
     print(f"REAL RESULT = {part_two('input.txt')}\n\n")
