@@ -32,8 +32,8 @@ def brute_force_it(input_filename, part_one=True):
                     max_y = y_pos
                 if x_vel > 0:
                     x_vel -= 1
-                elif x_vel < 0:
-                    x_vel += 1
+                # elif x_vel < 0:  WHY WOULD I CARE ABOUT THIS?!
+                #     x_vel += 1
                 y_vel -= 1
                 if x_pos > top_of_x:
                     break
