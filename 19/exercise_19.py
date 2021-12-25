@@ -6,14 +6,9 @@ from itertools import product, permutations
 sys.path.append("..")
 import helpers
 
-# rotation_table = [(0, 0, 0),
-#                   (90, 0, 0),
-#                   (180, 0, 0),
-#                   (270, 0, 0)]
-
-# (x, y, z, roll (i.e. 90 degree rotations)
 
 ORIENTATIONS = list(itertools.product((1, -1), (1, -1), (1, -1)))
+
 
 def get_all_rotations(x, y, z):
     output = []
@@ -24,13 +19,13 @@ def get_all_rotations(x, y, z):
     return output
 
 
-def create_constellation(coord_set):
-    constellation = set()
-    for point in coord_set:
-        for point_2 in coord_set:
-            if point != point_2:
-                constellation.add((point[0] - point_2[0], point[1] - point_2[1], point[2] - point_2[2]))
-    return constellation
+# def create_constellation(coord_set):
+#     constellation = set()
+#     for point in coord_set:
+#         for point_2 in coord_set:
+#             if point != point_2:
+#                 constellation.add((point[0] - point_2[0], point[1] - point_2[1], point[2] - point_2[2]))
+#     return constellation
 
 
 def parse_scanner_data(input_data):
@@ -50,36 +45,55 @@ def parse_scanner_data(input_data):
     return scanner_dict
 
 
-
-def diff_constellations(scanner_1, scanner_2, scanner_dict):
-    scanner_1_constellation = create_constellation(scanner_dict[scanner_1])
-    scannner_2_rotations = {n: set() for n in range(0, 48)}
-    for point in scanner_dict[scanner_2]:
-        rotations = get_all_rotations(point[0], point[1], point[2])
-        for idx, point in enumerate(rotations):
-            scannner_2_rotations[idx].add(point)
-    scanner_2_constellations = []
-    for rotation in scannner_2_rotations:
-        scanner_2_constellations.append(create_constellation(scannner_2_rotations[rotation]))
-    probably_right_constellation = None
-    max_overlap = 0
-    for idx, constellation in enumerate(scanner_2_constellations):
-        overlap = len(constellation.intersection(scanner_1_constellation))
-        if overlap > max_overlap:
-            probably_right_constellation = (constellation, idx)
-            max_overlap = overlap
-    if probably_right_constellation:
-        print("probably right rotation idx is ", probably_right_constellation[1])
-        print("len int is ", max_overlap)
-    if probably_right_constellation:
-        return probably_right_constellation[1], max_overlap
-    else:
-        return None, 0
+#
+# def diff_constellations(scanner_1, scanner_2, scanner_dict):
+#     scanner_1_constellation = create_constellation(scanner_dict[scanner_1])
+#     scannner_2_rotations = {n: set() for n in range(0, 48)}
+#     for point in scanner_dict[scanner_2]:
+#         rotations = get_all_rotations(point[0], point[1], point[2])
+#         for idx, point in enumerate(rotations):
+#             scannner_2_rotations[idx].add(point)
+#     scanner_2_constellations = []
+#     for rotation in scannner_2_rotations:
+#         scanner_2_constellations.append(create_constellation(scannner_2_rotations[rotation]))
+#     probably_right_constellation = None
+#     max_overlap = 0
+#     for idx, constellation in enumerate(scanner_2_constellations):
+#         overlap = len(constellation.intersection(scanner_1_constellation))
+#         if overlap > max_overlap:
+#             probably_right_constellation = (constellation, idx)
+#             max_overlap = overlap
+#     if probably_right_constellation:
+#         print("probably right rotation idx is ", probably_right_constellation[1])
+#         print("len int is ", max_overlap)
+#     if probably_right_constellation:
+#         return probably_right_constellation[1], max_overlap
+#     else:
+#         return None, 0
 
 
 def get_rotated_coords(scanner_idx, rotation_idx, scanner_dict):
     print(scanner_dict[scanner_idx])
     return {get_all_rotations(point[0], point[1], point[2])[rotation_idx] for point in scanner_dict[scanner_idx]}
+
+
+def find_matchup(scanner_1, scanner_2, scanner_dict):
+    scanner_2_rotations = {}
+    for point in scanner_dict[scanner_2]:
+        rotations = get_all_rotations(point[0], point[1], point[2])
+        for idx, point in enumerate(rotations):
+            scanner_2_rotations[idx].add(point)
+    for rotation in scanner_2_rotations:
+        for beacon_a in scanner_dict[scanner_1]:
+            for beacon_b in scanner_2_rotations[rotation]:
+                overlap = 0
+                offset = (beacon_a[0] - beacon_b[0], beacon_a[1] - beacon_b[1], beacon_a[2] - beacon_b[2])
+                for nested_beacon_b in scanner_2_rotations[rotation]:
+                    if nested_beacon_b + offset in scanner_dict[scanner_1]:
+                        overlap += 1
+                if overlap >= 12:
+                    return (offset, scanner_2_rotations[rotation])
+
 
 
 def part_one(input_filename):
