@@ -1,7 +1,6 @@
 import itertools
 import sys
-import numpy as np
-import scipy
+from operator import add
 from itertools import product, permutations
 sys.path.append("..")
 import helpers
@@ -19,15 +18,6 @@ def get_all_rotations(x, y, z):
     return output
 
 
-# def create_constellation(coord_set):
-#     constellation = set()
-#     for point in coord_set:
-#         for point_2 in coord_set:
-#             if point != point_2:
-#                 constellation.add((point[0] - point_2[0], point[1] - point_2[1], point[2] - point_2[2]))
-#     return constellation
-
-
 def parse_scanner_data(input_data):
     current_scanner = None
     scanner_data = set()
@@ -42,43 +32,16 @@ def parse_scanner_data(input_data):
         else:
             x, y, z = line.split(",")
             scanner_data.add((int(x), int(y), int(z)))
+    scanner_dict[current_scanner] = scanner_data
     return scanner_dict
 
 
-#
-# def diff_constellations(scanner_1, scanner_2, scanner_dict):
-#     scanner_1_constellation = create_constellation(scanner_dict[scanner_1])
-#     scannner_2_rotations = {n: set() for n in range(0, 48)}
-#     for point in scanner_dict[scanner_2]:
-#         rotations = get_all_rotations(point[0], point[1], point[2])
-#         for idx, point in enumerate(rotations):
-#             scannner_2_rotations[idx].add(point)
-#     scanner_2_constellations = []
-#     for rotation in scannner_2_rotations:
-#         scanner_2_constellations.append(create_constellation(scannner_2_rotations[rotation]))
-#     probably_right_constellation = None
-#     max_overlap = 0
-#     for idx, constellation in enumerate(scanner_2_constellations):
-#         overlap = len(constellation.intersection(scanner_1_constellation))
-#         if overlap > max_overlap:
-#             probably_right_constellation = (constellation, idx)
-#             max_overlap = overlap
-#     if probably_right_constellation:
-#         print("probably right rotation idx is ", probably_right_constellation[1])
-#         print("len int is ", max_overlap)
-#     if probably_right_constellation:
-#         return probably_right_constellation[1], max_overlap
-#     else:
-#         return None, 0
-
-
 def get_rotated_coords(scanner_idx, rotation_idx, scanner_dict):
-    print(scanner_dict[scanner_idx])
     return {get_all_rotations(point[0], point[1], point[2])[rotation_idx] for point in scanner_dict[scanner_idx]}
 
 
 def find_matchup(scanner_1, scanner_2, scanner_dict):
-    scanner_2_rotations = {}
+    scanner_2_rotations = {n: set() for n in range(48)}
     for point in scanner_dict[scanner_2]:
         rotations = get_all_rotations(point[0], point[1], point[2])
         for idx, point in enumerate(rotations):
@@ -89,43 +52,59 @@ def find_matchup(scanner_1, scanner_2, scanner_dict):
                 overlap = 0
                 offset = (beacon_a[0] - beacon_b[0], beacon_a[1] - beacon_b[1], beacon_a[2] - beacon_b[2])
                 for nested_beacon_b in scanner_2_rotations[rotation]:
-                    if nested_beacon_b + offset in scanner_dict[scanner_1]:
+                    hypothetical_beacon = tuple(map(add, nested_beacon_b, offset))
+                    if hypothetical_beacon in scanner_dict[scanner_1]:
                         overlap += 1
                 if overlap >= 12:
+                    print("found some overlap!")
+                    scanner_2_rotations[rotation] = set([tuple(map(add, beacon, offset)) for beacon in scanner_2_rotations[rotation]])
                     return (offset, scanner_2_rotations[rotation])
+    return None
 
 
 
-def part_one(input_filename):
+def part_one_and_two(input_filename):
     input_data = helpers.parse_input(input_filename)
     scanner_dict = parse_scanner_data(input_data)
-    constellation_dict = {}
-    rotation_locked = set()
-    for scanner in scanner_dict:
-        constellation_dict[scanner] = create_constellation(scanner_dict[scanner])
-    for scanner in scanner_dict:
-        for other_scanner in scanner_dict:
-            if scanner != other_scanner and other_scanner not in rotation_locked:
-                probable_rotation, confidence = diff_constellations(scanner, other_scanner, scanner_dict)
-                if confidence > 12:
-                    print(f"found one (?!) - scanner {other_scanner} rotating to {probable_rotation}")
-                    rotation_locked.add(other_scanner)
-                    scanner_dict[other_scanner] = get_rotated_coords(other_scanner,probable_rotation, scanner_dict)
+    locked_in = set([0])
+    offsets = set()
+    while len(locked_in) < len(scanner_dict):
+        for scanner in scanner_dict:
+            if scanner != 0 and scanner not in locked_in:
+                matchup = find_matchup(0, scanner, scanner_dict)
+                if matchup:
+                    scanner_dict[0] = scanner_dict[0].union(matchup[1])
+                    locked_in.add(scanner)
+                    offsets.add(matchup[0])
+                    print("locked in = ", locked_in)
+                    print("offsets = ", offsets)
+    print("max offsets = ", find_max_manhattan(offsets))
+    return len(scanner_dict[0])
 
 
-def part_two(input_filename):
-    input_data = helpers.parse_input(input_filename)
-    if not input_data:
-        return "*** NO INPUT SUPPLIED ***"
-    # do stuff here
-    output = input_data
-    return output
+def find_max_manhattan(offsets):
+    max_offset = 0
+    for offset_1 in offsets:
+        for offset_2 in offsets:
+            if offset_1 != offset_2:
+                offset_x = abs(offset_1[0] - offset_2[0])
+                offset_y = abs(offset_1[1] - offset_2[1])
+                offset_z = abs(offset_1[2] - offset_2[2])
+                total_offset = sum([offset_x, offset_y, offset_z])
+                if total_offset > max_offset:
+                    max_offset = total_offset
+    return max_offset
+
+
+def find_max_manhattan_from_file(offsets_file):
+    input_data = helpers.parse_input(offsets_file)
+    offsets = [item[1:-1] for item in input_data]
+    offsets = [item.split(", ") for item in offsets]
+    offsets = [[int(subitem) for subitem in item] for item in offsets]
+    return find_max_manhattan(offsets)
 
 
 if __name__ == "__main__":
-    print("*** PART ONE ***\n")
-    print(f"Test result = {part_one('inputtest.txt')}\n")
-    # print(f"REAL RESULT = {part_one('input.txt')}\n\n")
-    # print("*** PART TWO ***\n")
-    # print(f"Test result = {part_two('inputtest.txt')}\n")
-    # print(f"REAL RESULT = {part_two('input.txt')}\n\n")
+    print("*** BOTH PARTS ***\n")
+    print(f"Test result = {part_one_and_two('inputtest.txt')}\n")
+    print(f"REAL RESULT = {part_one_and_two('input.txt')}")
